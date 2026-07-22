@@ -37,3 +37,5 @@ infra/docker/data/
 # Scratch / caches
 .npm-cache/
 food-ordering-tmp/
+
+.gh-config/
