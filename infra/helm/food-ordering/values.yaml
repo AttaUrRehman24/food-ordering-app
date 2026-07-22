@@ -1,0 +1,63 @@
+gateway:
+  nameOverride: gateway
+  image:
+    repository: food-ordering/gateway
+  service:
+    port: 3001
+  canary:
+    enabled: true
+    weight: 10
+
+identity:
+  nameOverride: identity
+  image:
+    repository: food-ordering/identity
+  service:
+    port: 3002
+
+catalog:
+  nameOverride: catalog
+  image:
+    repository: food-ordering/catalog
+  service:
+    port: 3003
+
+cart:
+  nameOverride: cart
+  image:
+    repository: food-ordering/cart
+  service:
+    port: 3004
+
+order:
+  nameOverride: order
+  image:
+    repository: food-ordering/order
+  service:
+    port: 3005
+
+notification:
+  nameOverride: notification
+  image:
+    repository: food-ordering/notification
+  service:
+    port: 3006
+  replicaCount: 2
+
+realtime:
+  nameOverride: realtime
+  image:
+    repository: food-ordering/realtime
+  service:
+    port: 3007
+  # sticky sessions at ingress for WS ( Documentation §10 / §13)
+
+web:
+  nameOverride: web
+  image:
+    repository: food-ordering/web
+  service:
+    port: 3000
+  probes:
+    livenessPath: /
+    readinessPath: /

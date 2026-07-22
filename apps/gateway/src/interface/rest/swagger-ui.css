@@ -1,0 +1,243 @@
+/* Food Order App OpenAPI — enterprise Swagger UI theme */
+
+:root {
+  --pg-ink: #0b1610;
+  --pg-forest: #14301f;
+  --pg-ember: #d9480f;
+  --pg-ember-dark: #b33a0a;
+  --pg-paper: #f7f4ef;
+  --pg-line: #d8d0c6;
+  --pg-muted: #5c665f;
+}
+
+.swagger-ui {
+  font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  color: var(--pg-ink);
+}
+
+.swagger-ui .topbar {
+  background: linear-gradient(90deg, var(--pg-ink) 0%, var(--pg-forest) 55%, #1a3d28 100%);
+  border-bottom: 3px solid var(--pg-ember);
+  padding: 10px 0;
+}
+
+.swagger-ui .topbar .download-url-wrapper {
+  display: none;
+}
+
+.swagger-ui .topbar-wrapper::before {
+  content: 'Food Order App · OpenAPI 3';
+  color: #f7f4ef;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  font-size: 14px;
+  margin-left: 16px;
+}
+
+.swagger-ui .info {
+  margin: 28px 0 20px;
+}
+
+.swagger-ui .info .title {
+  font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+  color: var(--pg-ink);
+  font-size: 2.1rem;
+  letter-spacing: -0.02em;
+}
+
+.swagger-ui .info .title small {
+  background: var(--pg-ember) !important;
+  border-radius: 2px !important;
+  top: -4px;
+}
+
+.swagger-ui .info .title small.version-stamp {
+  background: var(--pg-forest) !important;
+}
+
+.swagger-ui .info .base-url {
+  font-weight: 600;
+  color: var(--pg-forest);
+}
+
+.swagger-ui .info a {
+  color: var(--pg-ember-dark);
+}
+
+.swagger-ui .scheme-container {
+  background: var(--pg-paper);
+  box-shadow: none;
+  border: 1px solid var(--pg-line);
+  border-radius: 2px;
+  padding: 14px 18px;
+  margin: 0 0 24px;
+}
+
+.swagger-ui .btn.authorize {
+  background: var(--pg-ember);
+  border-color: var(--pg-ember);
+  border-radius: 2px;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.swagger-ui .btn.authorize svg {
+  fill: #fff;
+}
+
+.swagger-ui .btn.authorize:hover {
+  background: var(--pg-ember-dark);
+  border-color: var(--pg-ember-dark);
+}
+
+.swagger-ui .btn.execute {
+  background: var(--pg-ink);
+  border-color: var(--pg-ink);
+  border-radius: 2px;
+  font-weight: 600;
+}
+
+.swagger-ui .btn.cancel {
+  border-radius: 2px;
+}
+
+.swagger-ui .opblock-tag {
+  border-radius: 2px;
+  border-bottom: 1px solid var(--pg-line);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 1.15rem;
+}
+
+.swagger-ui .opblock-tag small {
+  color: var(--pg-muted);
+  font-size: 0.85rem;
+}
+
+.swagger-ui .opblock {
+  border-radius: 2px;
+  box-shadow: none;
+  border: 1px solid var(--pg-line);
+  margin: 0 0 10px;
+  background: #fff;
+}
+
+.swagger-ui .opblock .opblock-summary {
+  border-radius: 2px;
+}
+
+.swagger-ui .opblock.opblock-post {
+  border-color: #8fbc8f;
+  background: rgba(143, 188, 143, 0.06);
+}
+
+.swagger-ui .opblock.opblock-get {
+  border-color: #6ba3d6;
+  background: rgba(107, 163, 214, 0.06);
+}
+
+.swagger-ui .opblock.opblock-put,
+.swagger-ui .opblock.opblock-patch {
+  border-color: #d4a017;
+  background: rgba(212, 160, 23, 0.06);
+}
+
+.swagger-ui .opblock.opblock-delete {
+  border-color: #c45c5c;
+  background: rgba(196, 92, 92, 0.06);
+}
+
+.swagger-ui .opblock .opblock-summary-method {
+  border-radius: 2px;
+  font-weight: 700;
+  min-width: 72px;
+}
+
+.swagger-ui table thead tr td,
+.swagger-ui table thead tr th {
+  color: var(--pg-muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--pg-line);
+}
+
+.swagger-ui .parameter__name {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 12px;
+}
+
+.swagger-ui .response-col_status {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+.swagger-ui select,
+.swagger-ui input[type='text'],
+.swagger-ui input[type='password'],
+.swagger-ui input[type='search'],
+.swagger-ui input[type='email'],
+.swagger-ui textarea {
+  border-radius: 2px !important;
+  border-color: var(--pg-line) !important;
+}
+
+.swagger-ui .model-box {
+  border-radius: 2px;
+  background: var(--pg-paper);
+}
+
+.swagger-ui section.models {
+  border-radius: 2px;
+  border: 1px solid var(--pg-line);
+}
+
+.swagger-ui section.models h4 {
+  font-family: 'Fraunces', Georgia, serif;
+}
+
+.swagger-ui .markdown p,
+.swagger-ui .renderedMarkdown p {
+  line-height: 1.55;
+  color: #2a332c;
+}
+
+.swagger-ui .markdown code,
+.swagger-ui .renderedMarkdown code {
+  background: #ebe4da;
+  padding: 1px 5px;
+  border-radius: 2px;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.88em;
+}
+
+.swagger-ui .markdown table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 12px 0;
+}
+
+.swagger-ui .markdown table th,
+.swagger-ui .markdown table td {
+  border: 1px solid var(--pg-line);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.swagger-ui .markdown table th {
+  background: var(--pg-paper);
+}
+
+.swagger-ui .filter-container .operation-filter-input {
+  border: 1px solid var(--pg-line);
+  border-radius: 2px;
+  padding: 8px 12px;
+}
+
+.swagger-ui .dialog-ux .modal-ux {
+  border-radius: 2px;
+  border: 1px solid var(--pg-line);
+  box-shadow: 0 12px 40px rgba(11, 22, 16, 0.18);
+}
+
+.swagger-ui .auth-container .authorize {
+  margin-top: 8px;
+}

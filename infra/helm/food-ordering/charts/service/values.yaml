@@ -1,0 +1,35 @@
+replicaCount: 2
+
+image:
+  repository: food-ordering/service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  port: 3000
+
+#  Documentation §13 — rolling default; canary via progressive traffic annotation
+canary:
+  enabled: false
+  weight: 10
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: "1"
+    memory: 512Mi
+
+probes:
+  livenessPath: /health/live
+  readinessPath: /health/ready
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+pdb:
+  minAvailable: 1

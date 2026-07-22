@@ -1,0 +1,560 @@
+{
+  "generated_at": "2026-07-21T19:16:54.784Z",
+  "design_target": 5000000,
+  "config": {
+    "API_BASE": "http://127.0.0.1:3001/v1",
+    "CONCURRENCY": 50,
+    "TOTAL": 200,
+    "SETTLE_MS": 10000,
+    "SKIP_LOAD": false,
+    "PAYMENT_TYPE": "COD"
+  },
+  "before": {
+    "docker": {
+      "containers": [
+        {
+          "name": "food-ordering-postgres",
+          "status": "Up 5 hours (healthy)",
+          "ports": "0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp"
+        },
+        {
+          "name": "food-ordering-redis",
+          "status": "Up 5 hours (healthy)",
+          "ports": "0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp"
+        },
+        {
+          "name": "food-ordering-kafka",
+          "status": "Up 5 hours (healthy)",
+          "ports": "0.0.0.0:9092->9092/tcp, [::]:9092->9092/tcp"
+        },
+        {
+          "name": "food-ordering-minio",
+          "status": "Up 5 hours (healthy)",
+          "ports": "0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp"
+        }
+      ],
+      "resource_stats": [
+        {
+          "name": "food-ordering-postgres",
+          "cpu": "CPU=0.48%",
+          "mem": "MEM=75.62MiB / 7.755GiB"
+        },
+        {
+          "name": "food-ordering-redis",
+          "cpu": "CPU=4.19%",
+          "mem": "MEM=13.84MiB / 7.755GiB"
+        },
+        {
+          "name": "food-ordering-kafka",
+          "cpu": "CPU=252.56%",
+          "mem": "MEM=677.9MiB / 7.755GiB"
+        },
+        {
+          "name": "food-ordering-minio",
+          "cpu": "CPU=0.26%",
+          "mem": "MEM=80.42MiB / 7.755GiB"
+        }
+      ],
+      "horizontal_scaling_note": "App Nest processes run on host in local mode; infra (postgres/redis/kafka/minio) is Docker. For true horizontal scale use Helm replicas or `docker compose up --scale <svc>=N` with containerized apps."
+    },
+    "postgres": {
+      "orders_total": 351,
+      "orders_by_status": {
+        "paid": 351
+      },
+      "order_items": 351,
+      "order_outbox_total": 351,
+      "order_outbox_unpublished": 0,
+      "order_idempotency": 351,
+      "order_status_history": 702,
+      "users": 352,
+      "sessions": 360,
+      "notifications": 4128,
+      "notification_delivery": 4128,
+      "notification_delivery_by_status": {
+        "sent": 4128
+      },
+      "products": 36,
+      "carts": 0
+    },
+    "redis": {
+      "dbsize": 1,
+      "used_memory_human": "1.34M",
+      "connected_clients": 8,
+      "instantaneous_ops_per_sec": "0",
+      "keyspace_hits": 1717,
+      "keyspace_misses": 1578,
+      "keyspace_raw": "# Keyspace\r\ndb0:keys=1,expires=1,avg_ttl=58792,subexpiry=0",
+      "sample_key_prefixes": {
+        "cartish": 0,
+        "rate_limit": 0,
+        "catalogish": 1,
+        "scanned": 1
+      },
+      "sample_keys": [
+        "catalog:list:1:1"
+      ]
+    },
+    "kafka": {
+      "topics": [
+        "__consumer_offsets",
+        "catalog.product.changed",
+        "notification.email.DLQ",
+        "notification.push.DLQ",
+        "notification.sms.DLQ",
+        "order.created",
+        "order.failed",
+        "order.paid",
+        "order.status.changed",
+        "payment.result",
+        "session.revoked",
+        "user.otp.requested",
+        "user.registered"
+      ],
+      "offsets": {
+        "order.created": {
+          "present": true,
+          "high_watermarks": "order.created:0:2019"
+        },
+        "order.status.changed": {
+          "present": true,
+          "high_watermarks": "order.status.changed:0:351"
+        },
+        "order.paid": {
+          "present": true,
+          "high_watermarks": "order.paid:0:351"
+        },
+        "order.failed": {
+          "present": true,
+          "high_watermarks": "order.failed:0:0"
+        },
+        "payment.result": {
+          "present": true,
+          "high_watermarks": "payment.result:0:0\npayment.result:1:0\npayment.result:2:0"
+        },
+        "user.otp.requested": {
+          "present": true,
+          "high_watermarks": "user.otp.requested:0:3"
+        },
+        "notification.email.DLQ": {
+          "present": true,
+          "high_watermarks": "notification.email.DLQ:0:0"
+        }
+      },
+      "consumer_groups": [
+        "notification-workers",
+        "order-finalizer",
+        "realtime-order-status"
+      ]
+    },
+    "services": {
+      "health": {
+        "web": {
+          "port": 3000,
+          "status": 200,
+          "ok": true
+        },
+        "gateway": {
+          "port": 3001,
+          "status": 200,
+          "ok": true
+        },
+        "identity": {
+          "port": 3002,
+          "status": 200,
+          "ok": true
+        },
+        "catalog": {
+          "port": 3003,
+          "status": 200,
+          "ok": true
+        },
+        "cart": {
+          "port": 3004,
+          "status": 200,
+          "ok": true
+        },
+        "order": {
+          "port": 3005,
+          "status": 200,
+          "ok": true
+        },
+        "notification": {
+          "port": 3006,
+          "status": 200,
+          "ok": true
+        },
+        "realtime": {
+          "port": 3007,
+          "status": 200,
+          "ok": true
+        }
+      },
+      "gateway_metrics_sample": [
+        "process_resident_memory_bytes 49823744",
+        "http_request_duration_seconds_bucket{le=\"0.005\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 0",
+        "http_request_duration_seconds_bucket{le=\"0.01\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 36",
+        "http_request_duration_seconds_bucket{le=\"0.025\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 156",
+        "http_request_duration_seconds_bucket{le=\"0.05\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 211",
+        "http_request_duration_seconds_bucket{le=\"0.1\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 237",
+        "http_request_duration_seconds_bucket{le=\"0.25\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 245",
+        "http_request_duration_seconds_bucket{le=\"0.5\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 281",
+        "http_request_duration_seconds_bucket{le=\"1\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 298",
+        "http_request_duration_seconds_bucket{le=\"2\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 303",
+        "http_request_duration_seconds_bucket{le=\"+Inf\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 303",
+        "http_request_duration_seconds_sum{service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 37.12476267299998",
+        "http_request_duration_seconds_count{service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 303",
+        "http_request_duration_seconds_bucket{le=\"0.005\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 7",
+        "http_request_duration_seconds_bucket{le=\"0.01\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 8",
+        "http_request_duration_seconds_bucket{le=\"0.025\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 9",
+        "http_request_duration_seconds_bucket{le=\"0.05\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 9",
+        "http_request_duration_seconds_bucket{le=\"0.1\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 9",
+        "http_request_duration_seconds_bucket{le=\"0.25\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 9",
+        "http_request_duration_seconds_bucket{le=\"0.5\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 9",
+        "http_request_duration_seconds_bucket{le=\"1\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 9",
+        "http_request_duration_seconds_bucket{le=\"2\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 9",
+        "http_request_duration_seconds_bucket{le=\"+Inf\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 9",
+        "http_request_duration_seconds_sum{service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 0.031542316",
+        "http_request_duration_seconds_count{service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 9",
+        "http_request_duration_seconds_bucket{le=\"0.005\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 2",
+        "http_request_duration_seconds_bucket{le=\"0.01\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 3",
+        "http_request_duration_seconds_bucket{le=\"0.025\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 3",
+        "http_request_duration_seconds_bucket{le=\"0.05\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 4",
+        "http_request_duration_seconds_bucket{le=\"0.1\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 4",
+        "http_request_duration_seconds_bucket{le=\"0.25\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 4",
+        "http_request_duration_seconds_bucket{le=\"0.5\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 4",
+        "http_request_duration_seconds_bucket{le=\"1\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 4",
+        "http_request_duration_seconds_bucket{le=\"2\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 4",
+        "http_request_duration_seconds_bucket{le=\"+Inf\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 4",
+        "http_request_duration_seconds_sum{service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 0.060219657999999995",
+        "http_request_duration_seconds_count{service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 4",
+        "http_request_duration_seconds_bucket{le=\"0.005\",service=\"gateway\",method=\"POST\",route=\"/v1/auth/register\",status=\"201\"} 0",
+        "http_request_duration_seconds_bucket{le=\"0.01\",service=\"gateway\",method=\"POST\",route=\"/v1/auth/register\",status=\"201\"} 0",
+        "http_request_duration_seconds_bucket{le=\"0.025\",service=\"gateway\",method=\"POST\",route=\"/v1/auth/register\",status=\"201\"} 0"
+      ]
+    }
+  },
+  "after": {
+    "docker": {
+      "containers": [
+        {
+          "name": "food-ordering-postgres",
+          "status": "Up 5 hours (healthy)",
+          "ports": "0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp"
+        },
+        {
+          "name": "food-ordering-redis",
+          "status": "Up 5 hours (healthy)",
+          "ports": "0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp"
+        },
+        {
+          "name": "food-ordering-kafka",
+          "status": "Up 5 hours (healthy)",
+          "ports": "0.0.0.0:9092->9092/tcp, [::]:9092->9092/tcp"
+        },
+        {
+          "name": "food-ordering-minio",
+          "status": "Up 5 hours (healthy)",
+          "ports": "0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp"
+        }
+      ],
+      "resource_stats": [
+        {
+          "name": "food-ordering-postgres",
+          "cpu": "CPU=43.28%",
+          "mem": "MEM=80.54MiB / 7.755GiB"
+        },
+        {
+          "name": "food-ordering-redis",
+          "cpu": "CPU=20.49%",
+          "mem": "MEM=16.05MiB / 7.755GiB"
+        },
+        {
+          "name": "food-ordering-kafka",
+          "cpu": "CPU=412.99%",
+          "mem": "MEM=747.2MiB / 7.755GiB"
+        },
+        {
+          "name": "food-ordering-minio",
+          "cpu": "CPU=0.36%",
+          "mem": "MEM=80.47MiB / 7.755GiB"
+        }
+      ],
+      "horizontal_scaling_note": "App Nest processes run on host in local mode; infra (postgres/redis/kafka/minio) is Docker. For true horizontal scale use Helm replicas or `docker compose up --scale <svc>=N` with containerized apps."
+    },
+    "postgres": {
+      "orders_total": 551,
+      "orders_by_status": {
+        "pending": 186,
+        "paid": 365
+      },
+      "order_items": 551,
+      "order_outbox_total": 551,
+      "order_outbox_unpublished": 150,
+      "order_idempotency": 551,
+      "order_status_history": 916,
+      "users": 552,
+      "sessions": 560,
+      "notifications": 4377,
+      "notification_delivery": 4377,
+      "notification_delivery_by_status": {
+        "sent": 4377
+      },
+      "products": 36,
+      "carts": 0
+    },
+    "redis": {
+      "dbsize": 1,
+      "used_memory_human": "1.36M",
+      "connected_clients": 8,
+      "instantaneous_ops_per_sec": 1,
+      "keyspace_hits": 2690,
+      "keyspace_misses": 2405,
+      "keyspace_raw": "# Keyspace\r\ndb0:keys=1,expires=1,avg_ttl=7785971,subexpiry=0",
+      "sample_key_prefixes": {
+        "cartish": 0,
+        "rate_limit": 0,
+        "catalogish": 1,
+        "scanned": 1
+      },
+      "sample_keys": [
+        "product:4510c1b9-8c6a-4c90-9b79-c40c3fa56d0b"
+      ]
+    },
+    "kafka": {
+      "topics": [
+        "__consumer_offsets",
+        "catalog.product.changed",
+        "notification.email.DLQ",
+        "notification.push.DLQ",
+        "notification.sms.DLQ",
+        "order.created",
+        "order.failed",
+        "order.paid",
+        "order.status.changed",
+        "payment.result",
+        "session.revoked",
+        "user.otp.requested",
+        "user.registered"
+      ],
+      "offsets": {
+        "order.created": {
+          "present": true,
+          "high_watermarks": "order.created:0:8012"
+        },
+        "order.status.changed": {
+          "present": true,
+          "high_watermarks": "order.status.changed:0:383"
+        },
+        "order.paid": {
+          "present": true,
+          "high_watermarks": "order.paid:0:388"
+        },
+        "order.failed": {
+          "present": true,
+          "high_watermarks": "order.failed:0:0"
+        },
+        "payment.result": {
+          "present": true,
+          "high_watermarks": "payment.result:0:0\npayment.result:1:0\npayment.result:2:0"
+        },
+        "user.otp.requested": {
+          "present": true,
+          "high_watermarks": "user.otp.requested:0:3"
+        },
+        "notification.email.DLQ": {
+          "present": true,
+          "high_watermarks": "notification.email.DLQ:0:0"
+        }
+      },
+      "consumer_groups": [
+        "Error: Executing consumer group command failed due to java.util.concurrent.ExecutionException: org.apache.kafka.common.KafkaException: Failed to find brokers to send ListGroups"
+      ]
+    },
+    "services": {
+      "health": {
+        "web": {
+          "port": 3000,
+          "status": 200,
+          "ok": true
+        },
+        "gateway": {
+          "port": 3001,
+          "status": 200,
+          "ok": true
+        },
+        "identity": {
+          "port": 3002,
+          "status": 200,
+          "ok": true
+        },
+        "catalog": {
+          "port": 3003,
+          "status": 200,
+          "ok": true
+        },
+        "cart": {
+          "port": 3004,
+          "status": 200,
+          "ok": true
+        },
+        "order": {
+          "port": 3005,
+          "status": 200,
+          "ok": true
+        },
+        "notification": {
+          "port": 3006,
+          "status": 200,
+          "ok": true
+        },
+        "realtime": {
+          "port": 3007,
+          "status": 200,
+          "ok": true
+        }
+      },
+      "gateway_metrics_sample": [
+        "process_resident_memory_bytes 129327104",
+        "http_request_duration_seconds_bucket{le=\"0.005\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 0",
+        "http_request_duration_seconds_bucket{le=\"0.01\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 42",
+        "http_request_duration_seconds_bucket{le=\"0.025\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 203",
+        "http_request_duration_seconds_bucket{le=\"0.05\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 305",
+        "http_request_duration_seconds_bucket{le=\"0.1\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 386",
+        "http_request_duration_seconds_bucket{le=\"0.25\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 427",
+        "http_request_duration_seconds_bucket{le=\"0.5\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 469",
+        "http_request_duration_seconds_bucket{le=\"1\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 490",
+        "http_request_duration_seconds_bucket{le=\"2\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 503",
+        "http_request_duration_seconds_bucket{le=\"+Inf\",service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 503",
+        "http_request_duration_seconds_sum{service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 64.45612780200001",
+        "http_request_duration_seconds_count{service=\"gateway\",method=\"GET\",route=\"/v1/catalog/products\",status=\"200\"} 503",
+        "http_request_duration_seconds_bucket{le=\"0.005\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 8",
+        "http_request_duration_seconds_bucket{le=\"0.01\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 9",
+        "http_request_duration_seconds_bucket{le=\"0.025\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 10",
+        "http_request_duration_seconds_bucket{le=\"0.05\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 10",
+        "http_request_duration_seconds_bucket{le=\"0.1\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 10",
+        "http_request_duration_seconds_bucket{le=\"0.25\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 10",
+        "http_request_duration_seconds_bucket{le=\"0.5\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 10",
+        "http_request_duration_seconds_bucket{le=\"1\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 10",
+        "http_request_duration_seconds_bucket{le=\"2\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 10",
+        "http_request_duration_seconds_bucket{le=\"+Inf\",service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 10",
+        "http_request_duration_seconds_sum{service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 0.032423468000000004",
+        "http_request_duration_seconds_count{service=\"gateway\",method=\"GET\",route=\"/health/live\",status=\"200\"} 10",
+        "http_request_duration_seconds_bucket{le=\"0.005\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 2",
+        "http_request_duration_seconds_bucket{le=\"0.01\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 3",
+        "http_request_duration_seconds_bucket{le=\"0.025\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 4",
+        "http_request_duration_seconds_bucket{le=\"0.05\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 5",
+        "http_request_duration_seconds_bucket{le=\"0.1\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 5",
+        "http_request_duration_seconds_bucket{le=\"0.25\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 5",
+        "http_request_duration_seconds_bucket{le=\"0.5\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 5",
+        "http_request_duration_seconds_bucket{le=\"1\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 5",
+        "http_request_duration_seconds_bucket{le=\"2\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 5",
+        "http_request_duration_seconds_bucket{le=\"+Inf\",service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 5",
+        "http_request_duration_seconds_sum{service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 0.083643942",
+        "http_request_duration_seconds_count{service=\"gateway\",method=\"GET\",route=\"/metrics\",status=\"200\"} 5",
+        "http_request_duration_seconds_bucket{le=\"0.005\",service=\"gateway\",method=\"POST\",route=\"/v1/auth/register\",status=\"201\"} 0",
+        "http_request_duration_seconds_bucket{le=\"0.01\",service=\"gateway\",method=\"POST\",route=\"/v1/auth/register\",status=\"201\"} 0",
+        "http_request_duration_seconds_bucket{le=\"0.025\",service=\"gateway\",method=\"POST\",route=\"/v1/auth/register\",status=\"201\"} 0"
+      ]
+    }
+  },
+  "deltas": {
+    "postgres": {
+      "orders_total": {
+        "before": 351,
+        "after": 551,
+        "delta": 200
+      },
+      "order_items": {
+        "before": 351,
+        "after": 551,
+        "delta": 200
+      },
+      "order_outbox_total": {
+        "before": 351,
+        "after": 551,
+        "delta": 200
+      },
+      "order_outbox_unpublished": {
+        "before": 0,
+        "after": 150,
+        "delta": 150
+      },
+      "order_idempotency": {
+        "before": 351,
+        "after": 551,
+        "delta": 200
+      },
+      "order_status_history": {
+        "before": 702,
+        "after": 916,
+        "delta": 214
+      },
+      "users": {
+        "before": 352,
+        "after": 552,
+        "delta": 200
+      },
+      "sessions": {
+        "before": 360,
+        "after": 560,
+        "delta": 200
+      },
+      "notifications": {
+        "before": 4128,
+        "after": 4377,
+        "delta": 249
+      },
+      "notification_delivery": {
+        "before": 4128,
+        "after": 4377,
+        "delta": 249
+      },
+      "carts": {
+        "before": 0,
+        "after": 0,
+        "delta": 0
+      }
+    }
+  },
+  "load": {
+    "skipped": false,
+    "wallMs": 56874.40247,
+    "completed": 200,
+    "successful": 200,
+    "failed": 0,
+    "successRate": 100,
+    "throughput_flows_per_sec": 3.516520461124767,
+    "e2e_ms": {
+      "min": 4712.087399999989,
+      "avg": 13140.213153925004,
+      "p50": 12508.817355000007,
+      "p95": 17651.157311999996,
+      "p99": 18629.465788,
+      "max": 30514.68725100001
+    },
+    "place_accept_ms": {
+      "avg": 1716.5583426150001,
+      "p95": 3360.664988000004,
+      "max": 4891.237811999992
+    },
+    "failure_samples": []
+  },
+  "projection_5m": {
+    "design_target_orders": 5000000,
+    "measured_throughput_flows_per_sec": 3.516520461124767,
+    "hours_to_reach_target_at_measured_rate": 394.9611282638889,
+    "note": "5M parallel accepts require horizontal scale (many gateway/order replicas + Kafka partitions + Postgres write capacity). Local single-node measures the accept path; Kafka/outbox absorbs async work.",
+    "recommended_architecture": {
+      "gateway_replicas_behind_lb": "50–200+ (stateless Nest)",
+      "order_service_replicas": "20–100 with partitioned outbox pollers",
+      "kafka_partitions_order_created": "64–256",
+      "notification_workers": "scale consumers independently for email/SMS/push",
+      "postgres": "primary + read replicas; partitioned orders; connection pooling (PgBouncer)",
+      "redis": "cluster/sentinel for cart + rate-limit + catalog cache",
+      "docker_k8s": "Helm charts under infra/helm; HPA on CPU/RPS"
+    },
+    "rough_gateway_replicas_for_50k_accepts_per_sec_vs_measured": 14219,
+    "measured_place_p95_ms": 3360.664988000004
+  }
+}

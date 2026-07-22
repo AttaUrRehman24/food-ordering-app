@@ -1,0 +1,7 @@
+apiVersion: v2
+name: food-ordering-umbrella
+description: Umbrella chart skeleton for food-ordering services ( Documentation §13)
+type: application
+version: 0.0.1
+appVersion: "0.0.1"
+dependencies: []

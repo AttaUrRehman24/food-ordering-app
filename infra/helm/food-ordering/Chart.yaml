@@ -1,0 +1,42 @@
+# Umbrella Helm chart —  Documentation §13 (local / GitOps canary).
+# Cloud Terraform is out of scope (clarification Q7); charts target local kind/k3d or staging clusters.
+
+apiVersion: v2
+name: food-ordering
+description: Food ordering platform umbrella chart
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+dependencies:
+  - name: service
+    version: 0.1.0
+    repository: "file://charts/service"
+    alias: gateway
+  - name: service
+    version: 0.1.0
+    repository: "file://charts/service"
+    alias: identity
+  - name: service
+    version: 0.1.0
+    repository: "file://charts/service"
+    alias: catalog
+  - name: service
+    version: 0.1.0
+    repository: "file://charts/service"
+    alias: cart
+  - name: service
+    version: 0.1.0
+    repository: "file://charts/service"
+    alias: order
+  - name: service
+    version: 0.1.0
+    repository: "file://charts/service"
+    alias: notification
+  - name: service
+    version: 0.1.0
+    repository: "file://charts/service"
+    alias: realtime
+  - name: service
+    version: 0.1.0
+    repository: "file://charts/service"
+    alias: web

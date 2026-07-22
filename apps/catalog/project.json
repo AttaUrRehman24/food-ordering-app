@@ -1,0 +1,40 @@
+{
+  "name": "catalog",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/catalog/src",
+  "projectType": "application",
+  "tags": ["scope:backend", "type:app", "service:catalog"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p apps/catalog/tsconfig.app.json"
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/catalog"]
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ts-node -r tsconfig-paths/register -P apps/catalog/tsconfig.app.json apps/catalog/src/main.ts"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint 'apps/catalog/src/**/*.ts'"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p apps/catalog/tsconfig.app.json --noEmit"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "jest --config apps/catalog/jest.config.ts --passWithNoTests"
+      }
+    }
+  }
+}

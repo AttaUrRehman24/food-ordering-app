@@ -1,0 +1,9 @@
+apiVersion: 1
+providers:
+  - name: FoodOrdering
+    orgId: 1
+    folder: Food Ordering
+    type: file
+    disableDeletion: false
+    options:
+      path: /var/lib/grafana/dashboards

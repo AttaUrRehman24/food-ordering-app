@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Food Order App — High Concurrency Report</title>
+  <style>
+    :root { --ink:#0b1610; --muted:#5c665f; --line:#d8d0c6; --paper:#f7f4ef; --ok:#1b7f4a; --bad:#b42318; --ember:#d9480f; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif; color:var(--ink); background:linear-gradient(180deg,#efe8df 0%, #f7f4ef 40%, #fff 100%); line-height:1.5; }
+    header { background:linear-gradient(90deg,#0b1610,#14301f); color:#f7f4ef; padding:28px 24px; border-bottom:3px solid var(--ember); }
+    header h1 { margin:0 0 6px; font-family: Georgia, "Times New Roman", serif; font-size:1.75rem; }
+    header p { margin:0; opacity:.85; }
+    main { max-width:980px; margin:0 auto; padding:24px 18px 64px; }
+    section { background:#fff; border:1px solid var(--line); border-radius:2px; padding:18px 20px; margin:0 0 16px; }
+    h2 { margin:0 0 12px; font-size:1.15rem; border-bottom:1px solid var(--line); padding-bottom:8px; }
+    table { width:100%; border-collapse:collapse; font-size:.95rem; }
+    th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+    th { color:var(--muted); font-weight:600; background:var(--paper); }
+    .ok { color:var(--ok); font-weight:600; }
+    .bad { color:var(--bad); font-weight:600; }
+    pre { background:var(--paper); border:1px solid var(--line); padding:12px; overflow:auto; font-size:.82rem; border-radius:2px; }
+    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin:12px 0; }
+    .card { background:var(--paper); border:1px solid var(--line); padding:12px; border-radius:2px; }
+    .card .label { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+    .card .value { font-size:1.25rem; font-weight:700; margin-top:4px; }
+    .meta { display:grid; grid-template-columns:140px 1fr; gap:6px 12px; }
+    .meta span { color:var(--muted); }
+    ul { margin:8px 0; padding-left:18px; }
+    footer { color:var(--muted); font-size:.85rem; margin-top:8px; }
+    a { color:var(--ember); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Food Order App — High Concurrency Report</h1>
+    <p>Design target 5,000,000 orders · Generated 2026-07-21T19:16:54.784Z</p>
+  </header>
+  <main>
+    <section>
+      <h2>Run configuration</h2>
+      <div class="meta">
+        <span>Design target</span><div>5,000,000</div>
+        <span>TOTAL</span><div>200</div>
+        <span>CONCURRENCY</span><div>50</div>
+        <span>API_BASE</span><div>http://127.0.0.1:3001/v1</div>
+        <span>SKIP_LOAD</span><div>false</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>1. Service health</h2>
+      <table><thead><tr><th>Service</th><th>Port</th><th>OK</th><th>Status</th></tr></thead><tbody><tr><td>web</td><td>3000</td><td class="ok">yes</td><td>200</td></tr><tr><td>gateway</td><td>3001</td><td class="ok">yes</td><td>200</td></tr><tr><td>identity</td><td>3002</td><td class="ok">yes</td><td>200</td></tr><tr><td>catalog</td><td>3003</td><td class="ok">yes</td><td>200</td></tr><tr><td>cart</td><td>3004</td><td class="ok">yes</td><td>200</td></tr><tr><td>order</td><td>3005</td><td class="ok">yes</td><td>200</td></tr><tr><td>notification</td><td>3006</td><td class="ok">yes</td><td>200</td></tr><tr><td>realtime</td><td>3007</td><td class="ok">yes</td><td>200</td></tr></tbody></table>
+    </section>
+
+    <section>
+      <h2>2. Docker (infra)</h2>
+      <ul><li><strong>food-ordering-postgres</strong> — Up 5 hours (healthy)</li><li><strong>food-ordering-redis</strong> — Up 5 hours (healthy)</li><li><strong>food-ordering-kafka</strong> — Up 5 hours (healthy)</li><li><strong>food-ordering-minio</strong> — Up 5 hours (healthy)</li></ul>
+      <pre>food-ordering-postgres CPU=43.28% MEM=80.54MiB / 7.755GiB
+food-ordering-redis CPU=20.49% MEM=16.05MiB / 7.755GiB
+food-ordering-kafka CPU=412.99% MEM=747.2MiB / 7.755GiB
+food-ordering-minio CPU=0.36% MEM=80.47MiB / 7.755GiB</pre>
+      <p>App Nest processes run on host in local mode; infra (postgres/redis/kafka/minio) is Docker. For true horizontal scale use Helm replicas or `docker compose up --scale &lt;svc&gt;=N` with containerized apps.</p>
+    </section>
+
+    <section>
+      <h2>3. Load burst results</h2>
+      
+      <div class="cards">
+        <div class="card"><div class="label">Completed</div><div class="value">200</div></div>
+        <div class="card"><div class="label">Success</div><div class="value ok">200 (100.0%)</div></div>
+        <div class="card"><div class="label">Failed</div><div class="value ok">0</div></div>
+        <div class="card"><div class="label">Throughput</div><div class="value">3.52 /s</div></div>
+        <div class="card"><div class="label">Wall clock</div><div class="value">56874 ms</div></div>
+      </div>
+      <p><strong>E2E latency (ms):</strong> min 4712 · avg 13140 · p50 12509 · p95 17651 · p99 18629 · max 30515</p>
+      <p><strong>POST /orders 202 accept (ms):</strong> avg 1717 · p95 3361 · max 4891</p>
+      
+    
+    </section>
+
+    <section>
+      <h2>4. Postgres deltas</h2>
+      <table><thead><tr><th>Metric</th><th>Before</th><th>After</th><th>Δ</th></tr></thead><tbody><tr><td>orders_total</td><td>351</td><td>551</td><td class="ok">200</td></tr><tr><td>order_items</td><td>351</td><td>551</td><td class="ok">200</td></tr><tr><td>order_outbox_total</td><td>351</td><td>551</td><td class="ok">200</td></tr><tr><td>order_outbox_unpublished</td><td>0</td><td>150</td><td class="ok">150</td></tr><tr><td>order_idempotency</td><td>351</td><td>551</td><td class="ok">200</td></tr><tr><td>order_status_history</td><td>702</td><td>916</td><td class="ok">214</td></tr><tr><td>users</td><td>352</td><td>552</td><td class="ok">200</td></tr><tr><td>sessions</td><td>360</td><td>560</td><td class="ok">200</td></tr><tr><td>notifications</td><td>4128</td><td>4377</td><td class="ok">249</td></tr><tr><td>notification_delivery</td><td>4128</td><td>4377</td><td class="ok">249</td></tr><tr><td>carts</td><td>0</td><td>0</td><td class="">0</td></tr></tbody></table>
+      <h3>Orders by status</h3>
+      <pre>{
+  &quot;pending&quot;: 186,
+  &quot;paid&quot;: 365
+}</pre>
+      <h3>Notification delivery by status</h3>
+      <pre>{
+  &quot;sent&quot;: 4377
+}</pre>
+    </section>
+
+    <section>
+      <h2>5. Redis</h2>
+      <pre>{
+  &quot;dbsize&quot;: 1,
+  &quot;used_memory_human&quot;: &quot;1.36M&quot;,
+  &quot;connected_clients&quot;: 8,
+  &quot;instantaneous_ops_per_sec&quot;: 1,
+  &quot;keyspace_hits&quot;: 2690,
+  &quot;keyspace_misses&quot;: 2405,
+  &quot;keyspace_raw&quot;: &quot;# Keyspace\r\ndb0:keys=1,expires=1,avg_ttl=7785971,subexpiry=0&quot;,
+  &quot;sample_key_prefixes&quot;: {
+    &quot;cartish&quot;: 0,
+    &quot;rate_limit&quot;: 0,
+    &quot;catalogish&quot;: 1,
+    &quot;scanned&quot;: 1
+  },
+  &quot;sample_keys&quot;: [
+    &quot;product:4510c1b9-8c6a-4c90-9b79-c40c3fa56d0b&quot;
+  ]
+}</pre>
+    </section>
+
+    <section>
+      <h2>6. Kafka topics &amp; offsets</h2>
+      <p>Topics: __consumer_offsets, catalog.product.changed, notification.email.DLQ, notification.push.DLQ, notification.sms.DLQ, order.created, order.failed, order.paid, order.status.changed, payment.result, session.revoked, user.otp.requested, user.registered</p>
+      <pre>{
+  &quot;order.created&quot;: {
+    &quot;present&quot;: true,
+    &quot;high_watermarks&quot;: &quot;order.created:0:8012&quot;
+  },
+  &quot;order.status.changed&quot;: {
+    &quot;present&quot;: true,
+    &quot;high_watermarks&quot;: &quot;order.status.changed:0:383&quot;
+  },
+  &quot;order.paid&quot;: {
+    &quot;present&quot;: true,
+    &quot;high_watermarks&quot;: &quot;order.paid:0:388&quot;
+  },
+  &quot;order.failed&quot;: {
+    &quot;present&quot;: true,
+    &quot;high_watermarks&quot;: &quot;order.failed:0:0&quot;
+  },
+  &quot;payment.result&quot;: {
+    &quot;present&quot;: true,
+    &quot;high_watermarks&quot;: &quot;payment.result:0:0\npayment.result:1:0\npayment.result:2:0&quot;
+  },
+  &quot;user.otp.requested&quot;: {
+    &quot;present&quot;: true,
+    &quot;high_watermarks&quot;: &quot;user.otp.requested:0:3&quot;
+  },
+  &quot;notification.email.DLQ&quot;: {
+    &quot;present&quot;: true,
+    &quot;high_watermarks&quot;: &quot;notification.email.DLQ:0:0&quot;
+  }
+}</pre>
+      <p>Consumer groups: Error: Executing consumer group command failed due to java.util.concurrent.ExecutionException: org.apache.kafka.common.KafkaException: Failed to find brokers to send ListGroups</p>
+    </section>
+
+    <section>
+      <h2>7. Projection toward 5,000,000 orders</h2>
+      <pre>{
+  &quot;design_target_orders&quot;: 5000000,
+  &quot;measured_throughput_flows_per_sec&quot;: 3.516520461124767,
+  &quot;hours_to_reach_target_at_measured_rate&quot;: 394.9611282638889,
+  &quot;note&quot;: &quot;5M parallel accepts require horizontal scale (many gateway/order replicas + Kafka partitions + Postgres write capacity). Local single-node measures the accept path; Kafka/outbox absorbs async work.&quot;,
+  &quot;recommended_architecture&quot;: {
+    &quot;gateway_replicas_behind_lb&quot;: &quot;50–200+ (stateless Nest)&quot;,
+    &quot;order_service_replicas&quot;: &quot;20–100 with partitioned outbox pollers&quot;,
+    &quot;kafka_partitions_order_created&quot;: &quot;64–256&quot;,
+    &quot;notification_workers&quot;: &quot;scale consumers independently for email/SMS/push&quot;,
+    &quot;postgres&quot;: &quot;primary + read replicas; partitioned orders; connection pooling (PgBouncer)&quot;,
+    &quot;redis&quot;: &quot;cluster/sentinel for cart + rate-limit + catalog cache&quot;,
+    &quot;docker_k8s&quot;: &quot;Helm charts under infra/helm; HPA on CPU/RPS&quot;
+  },
+  &quot;rough_gateway_replicas_for_50k_accepts_per_sec_vs_measured&quot;: 14219,
+  &quot;measured_place_p95_ms&quot;: 3360.664988000004
+}</pre>
+    </section>
+
+    <section>
+      <h2>8. Design notes</h2>
+      <ul>
+        <li>Use message queues (Kafka) for order processing after HTTP 202.</li>
+        <li>Use Node clustering or Docker/K8s horizontal scaling for gateway &amp; order.</li>
+        <li>Optimize DB with indexes and partitioned orders/notifications.</li>
+        <li>Store long-running tasks (emailing, notifications) in background workers.</li>
+      </ul>
+      <footer>
+        Docs: <a href="../../docs/HIGH-CONCURRENCY.md">HIGH-CONCURRENCY.md</a> ·
+        <a href="../../docs/LOAD-TESTING.md">LOAD-TESTING.md</a> ·
+        <a href="http://localhost:3001/api/docs">Swagger</a>
+      </footer>
+    </section>
+  </main>
+</body>
+</html>

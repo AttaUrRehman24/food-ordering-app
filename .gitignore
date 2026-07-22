@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.npm-cache/
+
+# Build
+dist/
+tmp/
+out-tsc/
+.next/
+.nx/cache/
+.nx/workspace-data/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+*.log
+
+# Test / coverage
+coverage/
+*.lcov
+
+# Generated
+libs/proto/generated/
+apps/identity/keys/
+
+# Docker volumes
+infra/docker/data/
+
+# Scratch / caches
+.npm-cache/
+food-ordering-tmp/

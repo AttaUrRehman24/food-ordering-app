@@ -1,0 +1,40 @@
+{
+  "name": "order",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/order/src",
+  "projectType": "application",
+  "tags": ["scope:backend", "type:app", "service:order"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p apps/order/tsconfig.app.json"
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/order"]
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ts-node -r tsconfig-paths/register -P apps/order/tsconfig.app.json apps/order/src/main.ts"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint 'apps/order/src/**/*.ts'"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p apps/order/tsconfig.app.json --noEmit"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "jest --config apps/order/jest.config.ts --passWithNoTests"
+      }
+    }
+  }
+}

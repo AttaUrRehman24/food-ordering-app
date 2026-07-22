@@ -1,0 +1,27 @@
+# Article V.3 — P1 alerts
+groups:
+  - name: food-ordering-p1
+    rules:
+      - alert: OrderAcceptP99High
+        expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{route=~".*orders.*",method="POST"}[5m])) by (le)) > 0.1
+        for: 5m
+        labels:
+          severity: p1
+        annotations:
+          summary: "Order-accept p99 > 100ms sustained (Article V.3 / IV.1)"
+
+      - alert: HighErrorRate
+        expr: sum(rate(http_requests_total{status=~"5.."}[5m])) by (service) / sum(rate(http_requests_total[5m])) by (service) > 0.01
+        for: 5m
+        labels:
+          severity: p1
+        annotations:
+          summary: "Error rate > 1% on {{ $labels.service }}"
+
+      - alert: NotificationDlqNonEmpty
+        expr: increase(notification_dlq_messages_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: p1
+        annotations:
+          summary: "DLQ non-empty (Article IV.4 / V.3)"

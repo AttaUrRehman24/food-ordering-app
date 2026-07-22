@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package foodordering.identity.v1;
+
+option java_multiple_files = true;
+
+//  Documentation §3.2 Identity Service gRPC APIs
+// + §23 GetMe / ListSessions / RevokeSession (approved clarification Q1)
+
+service IdentityService {
+  rpc Register (RegisterRequest) returns (AuthTokensResponse);
+  rpc LoginPassword (LoginPasswordRequest) returns (AuthTokensResponse);
+  rpc RequestOtp (RequestOtpRequest) returns (RequestOtpResponse);
+  rpc VerifyOtp (VerifyOtpRequest) returns (AuthTokensResponse);
+  rpc Refresh (RefreshRequest) returns (AuthTokensResponse);
+  rpc Logout (LogoutRequest) returns (LogoutResponse);
+  rpc LogoutAll (LogoutAllRequest) returns (LogoutResponse);
+  rpc IntrospectToken (IntrospectTokenRequest) returns (IntrospectTokenResponse);
+  rpc AssignRole (AssignRoleRequest) returns (AssignRoleResponse);
+  rpc GetMe (GetMeRequest) returns (UserProfile);
+  rpc ListSessions (ListSessionsRequest) returns (ListSessionsResponse);
+  rpc RevokeSession (RevokeSessionRequest) returns (LogoutResponse);
+}
+
+message RegisterRequest {
+  string name = 1;
+  string email = 2;
+  string phone = 3;
+  string password = 4;
+}
+
+message LoginPasswordRequest {
+  string identifier = 1; // email or phone
+  string password = 2;
+}
+
+message RequestOtpRequest {
+  string identifier = 1;
+  string type = 2; // email | phone
+}
+
+message RequestOtpResponse {
+  string message = 1;
+  int32 expires_in = 2;
+}
+
+message VerifyOtpRequest {
+  string identifier = 1;
+  string code = 2;
+}
+
+message RefreshRequest {
+  string refresh_token = 1;
+}
+
+message LogoutRequest {
+  string access_jti = 1;
+  string refresh_token = 2;
+}
+
+message LogoutAllRequest {
+  string user_id = 1;
+}
+
+message LogoutResponse {
+  string message = 1;
+}
+
+message IntrospectTokenRequest {
+  string access_token = 1;
+}
+
+message IntrospectTokenResponse {
+  bool active = 1;
+  string user_id = 2;
+  string role = 3;
+  string jti = 4;
+}
+
+message AssignRoleRequest {
+  string user_id = 1;
+  string role = 2; // customer | admin
+}
+
+message AssignRoleResponse {
+  string user_id = 1;
+  string role = 2;
+}
+
+message GetMeRequest {
+  string user_id = 1;
+}
+
+message UserProfile {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string phone = 4;
+  string role = 5;
+  string created_at = 6;
+}
+
+message ListSessionsRequest {
+  string user_id = 1;
+}
+
+message SessionInfo {
+  string id = 1;
+  string device = 2;
+  string ip = 3;
+  string created_at = 4;
+  string last_active = 5;
+  bool current = 6;
+}
+
+message ListSessionsResponse {
+  repeated SessionInfo sessions = 1;
+}
+
+message RevokeSessionRequest {
+  string user_id = 1;
+  string session_id = 2;
+}
+
+message AuthTokensResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  UserProfile user = 3;
+}

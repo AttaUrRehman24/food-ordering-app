@@ -1,0 +1,27 @@
+{
+  "name": "@food-ordering/proto",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/proto/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:proto"],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint 'libs/proto/src/**/*.ts'"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p libs/proto/tsconfig.lib.json --noEmit"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "jest --config libs/proto/jest.config.ts --passWithNoTests"
+      }
+    }
+  }
+}

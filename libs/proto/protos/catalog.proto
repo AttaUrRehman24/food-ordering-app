@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+package foodordering.catalog.v1;
+
+//  Documentation §3.2 Catalog Service gRPC APIs
+
+service CatalogService {
+  rpc ListProducts (ListProductsRequest) returns (ListProductsResponse);
+  rpc GetProduct (GetProductRequest) returns (Product);
+  rpc CreateProduct (CreateProductRequest) returns (Product);
+  rpc UpdateProduct (UpdateProductRequest) returns (Product);
+  rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductResponse);
+  rpc UpsertVariant (UpsertVariantRequest) returns (Variant);
+  rpc DeleteVariant (DeleteVariantRequest) returns (DeleteVariantResponse);
+  //  Documentation §13 — minimal media seam (presigned product image upload)
+  rpc PresignProductImage (PresignProductImageRequest) returns (PresignProductImageResponse);
+}
+
+message ListProductsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message ListProductsResponse {
+  repeated Product products = 1;
+  int32 page = 2;
+  int32 limit = 3;
+  int32 total = 4;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message CreateProductRequest {
+  string name = 1;
+  string description = 2;
+  bool is_active = 3;
+  repeated VariantInput variants = 4;
+  string image_url = 5; // optional; set via media seam / presign
+}
+
+message UpdateProductRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  bool is_active = 4;
+  string image_url = 5;
+}
+
+message DeleteProductRequest {
+  string id = 1;
+}
+
+message DeleteProductResponse {
+  string id = 1;
+}
+
+message VariantInput {
+  string label = 1;
+  string price = 2; // decimal as string
+  bool is_active = 3;
+}
+
+message UpsertVariantRequest {
+  string id = 1; // empty = create
+  string product_id = 2;
+  string label = 3;
+  string price = 4;
+  bool is_active = 5;
+}
+
+message DeleteVariantRequest {
+  string id = 1;
+}
+
+message DeleteVariantResponse {
+  string id = 1;
+}
+
+message Variant {
+  string id = 1;
+  string product_id = 2;
+  string label = 3;
+  string price = 4;
+  bool is_active = 5;
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  bool is_active = 4;
+  string image_url = 5;
+  repeated Variant variants = 6;
+}
+
+message PresignProductImageRequest {
+  string product_id = 1;
+  string content_type = 2;
+  string file_extension = 3;
+}
+
+message PresignProductImageResponse {
+  string upload_url = 1;
+  string public_url = 2;
+  string object_key = 3;
+  int32 expires_in = 4;
+}

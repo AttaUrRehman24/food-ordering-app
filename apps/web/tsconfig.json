@@ -1,0 +1,27 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "noEmit": true,
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["src/*"],
+      "@food-ordering/proto": ["../../libs/proto/src/index.ts"],
+      "@food-ordering/domain": ["../../libs/domain/src/index.ts"],
+      "@food-ordering/auth": ["../../libs/auth/src/index.ts"],
+      "@food-ordering/kafka": ["../../libs/kafka/src/index.ts"],
+      "@food-ordering/observability": ["../../libs/observability/src/index.ts"],
+      "@food-ordering/config": ["../../libs/config/src/index.ts"],
+      "@food-ordering/persistence": ["../../libs/persistence/src/index.ts"]
+    },
+    "lib": ["dom", "dom.iterable", "ES2022"],
+    "isolatedModules": true
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}

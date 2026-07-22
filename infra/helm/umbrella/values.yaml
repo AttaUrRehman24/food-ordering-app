@@ -1,0 +1,4 @@
+nameOverride: food-ordering
+fullnameOverride: ""
+# Placeholder — service values overlays added when Deployments are defined.
+services: {}
